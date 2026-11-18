@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Special Question For You</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Bubbly & Cute Typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+    <!-- Canvas Confetti for Celebration Burst -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <style>
+        /* Custom Theme Variables & Bubbly Aesthetics */
+        :root {
+            --pink-bg: #ffe6f0;
+            --pink-light: #fff5f9;
+            --pink-mid: #ffb3d9;
+            --pink-hot: #ff66b2;
+            --pink-deep: #e6398d;
+        }
+
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background: radial-gradient(circle at top left, #fff0f6 0%, #ffd6e8 50%, #ffc2df 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+            color: #6b2146;
+            user-select: none;
+        }
+
+        h1, h2, h3, .bubbly-font {
+            font-family: 'Fredoka', cursive, sans-serif;
+        }
+
+        /* Glossy Bubbly Card */
+        .bubbly-card {
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(12px);
+            border: 4px solid #ffb3d9;
+            border-radius: 2.5rem;
+            box-shadow: 
+                0 20px 40px -10px rgba(255, 102, 178, 0.35),
+                inset 0 4px 12px rgba(255, 255, 255, 0.9);
+        }
+
+        /* Glossy Pink Yes Button */
+        .btn-yes {
+            background: linear-gradient(180deg, #ff85c2 0%, #ff4da6 100%);
+            border: 3px solid #ffffff;
+            box-shadow: 
+                0 8px 0 #d9267d,
+                0 15px 25px rgba(255, 77, 166, 0.45),
+                inset 0 3px 6px rgba(255, 255, 255, 0.7);
+            transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease;
+        }
+
+        .btn-yes:hover {
+            transform: translateY(-3px) scale(1.04);
+            box-shadow: 
+                0 10px 0 #d9267d,
+                0 20px 30px rgba(255, 77, 166, 0.55),
+                inset 0 3px 6px rgba(255, 255, 255, 0.8);
+        }
+
+        .btn-yes:active {
+            transform: translateY(4px);
+            box-shadow: 
+                0 3px 0 #d9267d,
+                0 6px 12px rgba(255, 77, 166, 0.4);
+        }
+
+        /* Playful Runaway No Button */
+        .btn-no {
+            background: linear-gradient(180deg, #fff0f5 0%, #ffd6e7 100%);
+            border: 3px solid #ff99cc;
+            color: #b33c77;
+            box-shadow: 
+                0 6px 0 #e68ab8,
+                0 10px 18px rgba(230, 138, 184, 0.3);
+            transition: left 0.28s cubic-bezier(0.34, 1.56, 0.64, 1), 
+                        top 0.28s cubic-bezier(0.34, 1.56, 0.64, 1),
+                        transform 0.2s ease;
+            z-index: 50;
+        }
+
+        /* Floating Background Animations */
+        @keyframes floatUp {
+            0% {
+                transform: translateY(105vh) rotate(0deg) scale(0.8);
+                opacity: 0;
+            }
+            15% {
+                opacity: 0.9;
+            }
+            85% {
+                opacity: 0.9;
+            }
+            100% {
+                transform: translateY(-15vh) rotate(360deg) scale(1.1);
+                opacity: 0;
+            }
+        }
+
+        @keyframes gentleBounce {
+            0%, 100% { transform: translateY(0px) rotate(-2deg); }
+            50% { transform: translateY(-8px) rotate(2deg); }
+        }
+
+        @keyframes sparklePulse {
+            0%, 100% { transform: scale(1) rotate(0deg); opacity: 0.85; }
+            50% { transform: scale(1.25) rotate(15deg); opacity: 1; }
+        }
+
+        @keyframes wagTail {
+            0%, 100% { transform: rotate(-12deg); }
+            50% { transform: rotate(22deg); }
+        }
+
+        .floating-particle {
+            position: fixed;
+            pointer-events: none;
+            z-index: 1;
+            animation: floatUp linear infinite;
+        }
+
+        .animate-float-slow {
+            animation: gentleBounce 3.2s ease-in-out infinite;
+        }
+
+        .animate-sparkle {
+            animation: sparklePulse 2.2s ease-in-out infinite;
+        }
+
+        .tail-wag {
+            transform-origin: bottom left;
+            animation: wagTail 0.6s ease-in-out infinite;
+        }
+
+        /* Smooth Screen Transitions */
+        .screen-fade-out {
+            opacity: 0;
+            transform: scale(0.92);
+            transition: opacity 0.45s ease, transform 0.45s ease;
+            pointer-events: none;
+        }
+
+        .screen-fade-in {
+            animation: popIn 0.65s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        @keyframes popIn {
+            0% {
+                opacity: 0;
+                transform: scale(0.85) translateY(25px);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        /* Cute Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #ffe6f0;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #ff99cc;
+            border-radius: 9999px;
+            border: 2px solid #ffe6f0;
+        }
+    </style>
+</head>
+<body class="relative flex items-center justify-center p-4 sm:p-6">
+
+    <!-- Floating Background Decorations Container (Hearts, Sparkles, Roses, Lilies) -->
+    <div id="floating-bg" class="fixed inset-0 overflow-hidden pointer-events-none z-0"></div>
+
+    <!-- ===================================================================== -->
+    <!-- PAGE 1: THE QUESTION SCREEN ("Do you forgive Sean?")                  -->
+    <!-- ===================================================================== -->
+    <main id="question-screen" class="relative z-10 w-full max-w-lg mx-auto my-6 sm:my-10">
+        
+        <!-- Main Bubbly Card -->
+        <div class="bubbly-card relative p-7 sm:p-10 text-center overflow-visible">
+            
+            <!-- Corner Floral & Sparkle Stickers -->
+            <span class="absolute -top-4 -left-4 text-3xl sm:text-4xl animate-sparkle select-none">🌹</span>
+            <span class="absolute -top-4 -right-4 text-3xl sm:text-4xl animate-sparkle select-none" style="animation-delay: 0.7s;">✨</span>
+            <span class="absolute -bottom-4 -left-3 text-3xl sm:text-4xl animate-float-slow select-none">🌸</span>
+            <span class="absolute -bottom-4 -right-3 text-3xl sm:text-4xl animate-float-slow select-none" style="animation-delay: 0.5s;">🌹</span>
+
+            <!-- Main Bubbly Heading -->
+            <h1 class="text-3xl sm:text-5xl font-bold text-pink-600 tracking-tight leading-tight mb-3 drop-shadow-sm">
+                Do you forgive Sean??
+            </h1>
+
+            <!-- Sweet Subtext -->
+            <p class="text-base sm:text-lg text-pink-800/80 font-semibold max-w-md mx-auto mb-3 leading-relaxed">
+                Please my baby princess 🥺
+            </p>
+
+            <!-- Dynamic Pleading Status Bubble (Appears when she tries to click "No") -->
+            <div class="min-h-[2.25rem] flex items-center justify-center mb-6">
+                <p id="pleading-message" class="hidden text-sm sm:text-base font-bold text-pink-500 bg-pink-50/90 px-4 py-1 rounded-full border border-pink-200 transition-all duration-200"></p>
+            </div>
+
+            <!-- Buttons Container -->
+            <div class="flex flex-wrap items-center justify-center gap-5 sm:gap-7 min-h-[76px] relative">
+                
+                <!-- YES BUTTON (Grows larger each time she tries to click No!) -->
+                <button id="yes-btn" type="button" class="btn-yes bubbly-font text-white font-bold text-xl sm:text-2xl px-9 py-4 rounded-full cursor-pointer tracking-wide flex items-center gap-2 z-20">
+                    <span>Yes!</span>
+                    <span class="text-2xl">💕</span>
+                </button>
+
+                <!-- NO BUTTON (Playfully runs away from cursor / tap!) -->
+                <button id="no-btn" type="button" class="btn-no bubbly-font font-bold text-lg sm:text-xl px-7 py-3.5 rounded-full cursor-pointer flex items-center gap-1.5">
+                    <span>No</span>
+                    <span>☹️</span>
+                </button>
+
+            </div>
+        </div>
+    </main>
+
+    <!-- ===================================================================== -->
+    <!-- PAGE 2: CELEBRATION & EMBEDDED VIDEO SCREEN (Revealed on "Yes!")      -->
+    <!-- ===================================================================== -->
+    <section id="celebration-screen" class="hidden relative z-10 w-full max-w-3xl mx-auto my-6 sm:my-10">
+        
+        <div class="bubbly-card relative p-6 sm:p-10 text-center">
+            
+            <!-- Decorative Floating Stickers Around Celebration Card -->
+            <span class="hidden sm:inline-block absolute -top-6 -left-6 text-5xl animate-float-slow">🌹</span>
+            <span class="hidden sm:inline-block absolute -top-6 -right-6 text-5xl animate-sparkle">✨</span>
+            <span class="hidden sm:inline-block absolute -bottom-6 -left-5 text-5xl animate-sparkle">🐱</span>
+            <span class="hidden sm:inline-block absolute -bottom-6 -right-5 text-5xl animate-float-slow">🐶</span>
+
+            <!-- Celebratory Header -->
+            <div class="inline-flex items-center gap-2 bg-gradient-to-r from-pink-100 via-rose-100 to-pink-100 border-2 border-pink-300 text-pink-600 font-bold text-xs sm:text-sm px-5 py-1.5 rounded-full mb-3 shadow-sm">
+                <span>💖</span>
+                <span>YAY! Love you, honeyy</span>
+            </div>
+
+            <h1 class="text-3xl sm:text-5xl font-bold text-pink-600 mb-6 leading-tight">
+                mwa mwa mwa
+            </h1>
+
+            <!-- Cute Decorated Video Frame -->
+            <div class="relative max-w-2xl mx-auto">
+                
+                <!-- Cute Top Corner Floral & Pet Accents on Video Frame -->
+                <div class="flex justify-between items-center px-3 -mb-3 relative z-20 pointer-events-none">
+                    <div class="flex items-center gap-1 bg-white px-3 py-1 rounded-full border-2 border-pink-300 shadow-sm text-sm font-bold text-pink-600">
+                        <span>🐶</span>
+                        <span>🌹</span>
+                        <span>🤍</span>
+                    </div>
+                    <div class="bg-pink-500 text-white text-xs font-bold px-3.5 py-1 rounded-full shadow-sm tracking-wide">
+                        ▶ Press Play Ganda
+                    </div>
+                    <div class="flex items-center gap-1 bg-white px-3 py-1 rounded-full border-2 border-pink-300 shadow-sm text-sm font-bold text-pink-600">
+                        <span>✨</span>
+                        <span>🌸</span>
+                        <span>🐱</span>
+                    </div>
+                </div>
+
+                <!-- Pastel Pink Glossy Video Container -->
+                <div class="bg-gradient-to-b from-pink-200 to-pink-300 p-2.5 sm:p-3.5 rounded-[2rem] border-4 border-white shadow-xl">
+                    <div class="relative rounded-[1.4rem] overflow-hidden bg-pink-950/10 aspect-video shadow-inner">
+                        
+                        <iframe 
+                            class="w-full h-full rounded-[1.4rem]"
+                            src="https://drive.google.com/file/d/1_ZZ6G5i3mZMme47gDIhATRU_WCns18k7/preview" 
+                            title="Special Video For You"
+                            frameborder="0" 
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                            allowfullscreen>
+                        </iframe>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- INTERACTIVE JAVASCRIPT LOGIC                                          -->
+    <!-- ===================================================================== -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const floatingBg = document.getElementById('floating-bg');
+            const questionScreen = document.getElementById('question-screen');
+            const celebrationScreen = document.getElementById('celebration-screen');
+            const yesBtn = document.getElementById('yes-btn');
+            const noBtn = document.getElementById('no-btn');
+            const pleadingMessage = document.getElementById('pleading-message');
+
+            // 1. Create Floating Background Particles (Hearts, Sparkles, Roses, White Lilies)
+            const particleSymbols = ['💖', '💕', '✨', '🌹', '🤍', '🌸', '🌷', '🐾'];
+            const totalParticles = 24;
+
+            for (let i = 0; i < totalParticles; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'floating-particle select-none';
+                particle.textContent = particleSymbols[i % particleSymbols.length];
+
+                const size = Math.floor(Math.random() * 16) + 16; // 16px to 32px
+                const leftPos = Math.random() * 98; // 0% to 98%
+                const duration = Math.random() * 10 + 10; // 10s to 20s
+                const delay = Math.random() * -20; // Start scattered immediately
+
+                particle.style.fontSize = `${size}px`;
+                particle.style.left = `${leftPos}vw`;
+                particle.style.animationDuration = `${duration}s`;
+                particle.style.animationDelay = `${delay}s`;
+
+                floatingBg.appendChild(particle);
+            }
+
+            // 2. Runaway "No" Button Logic & Cute Pleading Messages
+            const pleadingPhrases = [
+                "Ouch huhu wag pls 🥺👉👈",
+                "Sige na baby please po huhu 💔🥺",
+                "May yes naman ohh",
+                "Walaa bawall",
+                "Sorry na ganda pleasee",
+                "I love you please sorry na puu💖",
+                "Maganda 'yan pag nag yes ka hehe",
+                "Wala 'di 'yan gumagana hahaha",
+                "Please baby ko huhu💕",
+                "Sorry na babyy"
+            ];
+
+            let dodgeCount = 0;
+            let isButtonDetached = false;
+
+            function moveNoButton() {
+                dodgeCount++;
+
+                // Reveal and update cute pleading text
+                const phrase = pleadingPhrases[(dodgeCount - 1) % pleadingPhrases.length];
+                pleadingMessage.textContent = phrase;
+                pleadingMessage.classList.remove('hidden');
+                pleadingMessage.classList.add('scale-105', 'bg-pink-100');
+                setTimeout(() => {
+                    pleadingMessage.classList.remove('scale-105', 'bg-pink-100');
+                }, 220);
+
+                // Make the "Yes!" button slightly bigger & even more inviting each time!
+                const newScale = Math.min(1 + dodgeCount * 0.08, 1.65);
+                yesBtn.style.transform = `scale(${newScale})`;
+
+                // Detach "No" button to fixed viewport coordinates on first dodge
+                if (!isButtonDetached) {
+                    const rect = noBtn.getBoundingClientRect();
+                    noBtn.style.position = 'fixed';
+                    noBtn.style.left = `${rect.left}px`;
+                    noBtn.style.top = `${rect.top}px`;
+                    noBtn.style.margin = '0';
+                    document.body.appendChild(noBtn);
+                    isButtonDetached = true;
+                }
+
+                // Calculate safe bounds inside the viewport so it never escapes off-screen
+                const padding = 24;
+                const btnWidth = noBtn.offsetWidth || 120;
+                const btnHeight = noBtn.offsetHeight || 56;
+                const maxX = Math.max(padding, window.innerWidth - btnWidth - padding);
+                const maxY = Math.max(padding, window.innerHeight - btnHeight - padding);
+
+                const randomX = Math.floor(Math.random() * (maxX - padding + 1)) + padding;
+                const randomY = Math.floor(Math.random() * (maxY - padding + 1)) + padding;
+
+                noBtn.style.left = `${randomX}px`;
+                noBtn.style.top = `${randomY}px`;
+            }
+
+            // Trigger dodge on hover (desktop) and touch/click (mobile)
+            noBtn.addEventListener('mouseenter', moveNoButton);
+            noBtn.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                moveNoButton();
+            }, { passive: false });
+            noBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                moveNoButton();
+            });
+
+            // 3. Celebration Transition when "Yes!" is clicked
+            function launchCelebrationConfetti() {
+                if (typeof confetti !== 'function') return;
+
+                const colors = ['#ff4da6', '#ff85c2', '#ffb3d9', '#ffffff', '#ffe066'];
+                confetti({
+                    particleCount: 90,
+                    spread: 75,
+                    origin: { y: 0.6 },
+                    colors: colors
+                });
+
+                setTimeout(() => {
+                    confetti({
+                        particleCount: 60,
+                        angle: 60,
+                        spread: 60,
+                        origin: { x: 0, y: 0.65 },
+                        colors: colors
+                    });
+                    confetti({
+                        particleCount: 60,
+                        angle: 120,
+                        spread: 60,
+                        origin: { x: 1, y: 0.65 },
+                        colors: colors
+                    });
+                }, 250);
+            }
+
+            yesBtn.addEventListener('click', () => {
+                // Remove floating "No" button if detached
+                if (noBtn && noBtn.parentNode) {
+                    noBtn.remove();
+                }
+
+                launchCelebrationConfetti();
+
+                questionScreen.classList.add('screen-fade-out');
+                setTimeout(() => {
+                    questionScreen.classList.add('hidden');
+                    celebrationScreen.classList.remove('hidden');
+                    celebrationScreen.classList.add('screen-fade-in');
+                }, 400);
+            });
+        });
+    </script>
+</body>
+</html>
